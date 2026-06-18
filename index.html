@@ -72,15 +72,20 @@
                         <span class="action-title">Missions</span>
                         <span class="action-desc">Earn points</span>
                     </button>
+                    <button class="action-tile" onclick="showScreen('screen-daily')">
+                        <span class="action-icon">&#128197;</span>
+                        <span class="action-title">Daily</span>
+                        <span class="action-desc">Check in</span>
+                    </button>
+                    <button class="action-tile" onclick="showScreen('screen-referral')">
+                        <span class="action-icon">&#128101;</span>
+                        <span class="action-title">Friends</span>
+                        <span class="action-desc">Invite & earn</span>
+                    </button>
                     <button class="action-tile" onclick="showScreen('screen-submissions')">
                         <span class="action-icon">&#9776;</span>
                         <span class="action-title">Submissions</span>
                         <span class="action-desc">Track status</span>
-                    </button>
-                    <button class="action-tile" onclick="showScreen('screen-earnings')">
-                        <span class="action-icon">&#36;</span>
-                        <span class="action-title">Earnings</span>
-                        <span class="action-desc">Your rewards</span>
                     </button>
                 </div>
 
@@ -182,6 +187,99 @@
             </nav>
         </section>
 
+        <!-- Daily Check-in -->
+        <section id="screen-daily" class="screen">
+            <main class="page-main">
+                <header class="page-header">
+                    <h1 class="page-title">Daily Check-in</h1>
+                    <p class="page-subtitle">Come back every day to build your streak.</p>
+                </header>
+
+                <div class="card daily-card">
+                    <div class="streak-row">
+                        <div>
+                            <div class="streak-count" id="streak-count">0</div>
+                            <div class="streak-label">Day streak</div>
+                        </div>
+                        <button class="pill checkin-btn" id="checkin-btn" onclick="claimCheckIn()">Check In</button>
+                    </div>
+                    <div class="calendar" id="calendar"></div>
+                </div>
+
+                <div class="card reward-card">
+                    <div class="reward-amount" id="reward-amount">+10 P</div>
+                    <div class="reward-desc">Check in today to claim your daily reward.</div>
+                </div>
+            </main>
+
+            <nav class="bottom-nav">
+                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                    <span class="bottom-tab-icon">&#9733;</span>
+                    <span>Missions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
+                    <span class="bottom-tab-icon">&#9776;</span>
+                    <span>Submissions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- Referral -->
+        <section id="screen-referral" class="screen">
+            <main class="page-main">
+                <header class="page-header">
+                    <h1 class="page-title">Invite Friends</h1>
+                    <p class="page-subtitle">Earn points for every friend who joins.</p>
+                </header>
+
+                <div class="card referral-hero">
+                    <div class="referral-points" id="referral-earned">0</div>
+                    <div class="referral-label">Points from referrals</div>
+                </div>
+
+                <div class="card referral-link-card">
+                    <input type="text" id="referral-link-page" readonly>
+                    <button class="pill" onclick="copyReferralPage()">Copy</button>
+                </div>
+
+                <button class="btn btn-primary" onclick="shareReferral()">Share on Telegram</button>
+
+                <div class="section-header">
+                    <h2 class="section-title">Invited Friends</h2>
+                </div>
+                <div class="invited-list" id="invited-list">
+                    <p class="muted">No invites yet. Share your link to start earning.</p>
+                </div>
+            </main>
+
+            <nav class="bottom-nav">
+                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                    <span class="bottom-tab-icon">&#9733;</span>
+                    <span>Missions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
+                    <span class="bottom-tab-icon">&#9776;</span>
+                    <span>Submissions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
+                </button>
+            </nav>
+        </section>
+
         <!-- Earnings -->
         <section id="screen-earnings" class="screen">
             <main class="page-main">
@@ -199,7 +297,7 @@
                     <h2 class="section-title">Referral Link</h2>
                 </div>
                 <div class="card referral-card">
-                    <input type="text" id="referral-link" value="https://t.me/spraytrenches_bot?start=ref_123" readonly>
+                    <input type="text" id="referral-link" readonly>
                     <button class="copy-btn" onclick="copyReferral()" aria-label="Copy">
                         <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                     </button>

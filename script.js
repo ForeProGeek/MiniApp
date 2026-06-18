@@ -7,13 +7,58 @@ if (tg) {
     tg.setBackgroundColor('#0a0a0b');
 }
 
+// Persistent storage helpers
+const STORAGE_KEY = 'trenches_app_state';
+const USER_ID_KEY = 'trenches_user_id';
+
+function loadPersisted() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function saveState() {
+    try {
+        const payload = {
+            points: state.points,
+            xConnected: state.xConnected,
+            checkIn: state.checkIn,
+            referral: state.referral
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+        // ignore storage errors
+    }
+}
+
+function getUserId() {
+    let id = tg?.initDataUnsafe?.user?.id?.toString();
+    if (!id) {
+        try {
+            id = localStorage.getItem(USER_ID_KEY);
+        } catch (e) {}
+    }
+    if (!id) {
+        id = 'user_' + Math.random().toString(36).slice(2, 10);
+        try {
+            localStorage.setItem(USER_ID_KEY, id);
+        } catch (e) {}
+    }
+    return id;
+}
+
+const persisted = loadPersisted();
+
 // App state
 const state = {
-    points: 0,
-    xConnected: false,
+    points: persisted?.points || 0,
+    xConnected: persisted?.xConnected || false,
     user: {
-        name: 'Peaky Josh',
-        initial: 'P'
+        name: 'Trenches User',
+        initial: 'T'
     },
     missions: {
         daily: [
@@ -84,7 +129,16 @@ const state = {
             }
         ]
     },
-    submissions: []
+    submissions: [],
+    checkIn: persisted?.checkIn || {
+        lastCheckIn: null,
+        streak: 0,
+        history: []
+    },
+    referral: persisted?.referral || {
+        earned: 0,
+        invited: []
+    }
 };
 
 const icons = {
@@ -106,7 +160,9 @@ function showScreen(id) {
     if (id === 'screen-missions') renderMissions();
     if (id === 'screen-dashboard') renderDashboard();
     if (id === 'screen-submissions') renderSubmissions();
-    if (id === 'screen-earnings') renderEarnings();
+    if (id === 'screen-earnings') { renderEarnings(); renderReferral(); }
+    if (id === 'screen-daily') renderDaily();
+    if (id === 'screen-referral') renderReferral();
 }
 
 function closeApp() {
@@ -116,8 +172,9 @@ function closeApp() {
 // X connection
 function connectX() {
     state.xConnected = true;
-    state.user.name = '@Peaky Josh';
-    state.user.initial = 'P';
+    state.user.name = '@TrenchesUser';
+    state.user.initial = 'U';
+    saveState();
     updateProfile();
     showToast('X account connected');
 }
@@ -170,7 +227,7 @@ function renderDashboard() {
         const recommended = all.filter(m => m.status === 'open').slice(0, 3);
         dashboardMissions.innerHTML = recommended.length
             ? recommended.map(m => missionHTML(m)).join('')
-            : `<p class="muted">No missions or tasks available right now.</p>`;
+            : `<p class="muted">No missions available right now.</p>`;
     }
 }
 
@@ -270,14 +327,174 @@ function renderEarnings() {
     if (pointsEl) pointsEl.textContent = state.points;
 }
 
-// Referral
+// Daily check-in
+function canCheckIn() {
+    if (!state.checkIn.lastCheckIn) return true;
+    return new Date(state.checkIn.lastCheckIn).toDateString() !== new Date().toDateString();
+}
+
+function claimCheckIn() {
+    if (!canCheckIn()) {
+        showToast('Already checked in today');
+        return;
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const wasConsecutive = state.checkIn.lastCheckIn &&
+        new Date(state.checkIn.lastCheckIn).toDateString() === yesterday.toDateString();
+
+    state.checkIn.streak = wasConsecutive ? state.checkIn.streak + 1 : 1;
+    state.checkIn.lastCheckIn = new Date().toISOString();
+    state.checkIn.history.push(new Date().toDateString());
+
+    const baseReward = 10;
+    const streakBonus = state.checkIn.streak >= 7 ? 10 : 0;
+    const reward = baseReward + streakBonus;
+    state.points += reward;
+
+    saveState();
+    updatePoints();
+    renderDaily();
+    renderDashboard();
+
+    showToast(`Checked in! +${reward} P`);
+}
+
+function renderDaily() {
+    const streakEl = document.getElementById('streak-count');
+    const btn = document.getElementById('checkin-btn');
+    const calendar = document.getElementById('calendar');
+    const rewardAmount = document.getElementById('reward-amount');
+
+    if (streakEl) streakEl.textContent = state.checkIn.streak;
+
+    if (btn) {
+        if (!canCheckIn()) {
+            btn.textContent = 'Claimed';
+            btn.disabled = true;
+            btn.classList.add('ghost');
+        } else {
+            btn.textContent = 'Check In';
+            btn.disabled = false;
+            btn.classList.remove('ghost');
+        }
+    }
+
+    if (rewardAmount) {
+        const bonus = state.checkIn.streak >= 7 ? 10 : 0;
+        rewardAmount.textContent = `+${10 + bonus} P`;
+    }
+
+    if (calendar) {
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push(d);
+        }
+
+        calendar.innerHTML = days.map(d => {
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+            const dayNum = d.getDate();
+            const isClaimed = state.checkIn.history.includes(d.toDateString());
+            return `<div class="calendar-day ${isClaimed ? 'claimed' : ''}">
+                <span>${dayName}</span>
+                <span class="day-num">${dayNum}</span>
+            </div>`;
+        }).join('');
+    }
+}
+
+// Referrals
+function getReferralLink() {
+    return `https://t.me/spraytrenches_bot?start=ref_${getUserId()}`;
+}
+
+function renderReferral() {
+    const link = getReferralLink();
+    const pageInput = document.getElementById('referral-link-page');
+    const earningsInput = document.getElementById('referral-link');
+    const earnedEl = document.getElementById('referral-earned');
+    const list = document.getElementById('invited-list');
+
+    if (pageInput) pageInput.value = link;
+    if (earningsInput) earningsInput.value = link;
+    if (earnedEl) earnedEl.textContent = state.referral.earned;
+
+    if (list) {
+        list.innerHTML = state.referral.invited.length
+            ? state.referral.invited.map(f => `
+                <div class="submission-item">
+                    <div>
+                        <div class="submission-title">${f.name}</div>
+                        <div class="submission-meta">Joined ${new Date(f.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="status-badge approved">
+                        <span class="status-dot"></span>+${f.points}
+                    </div>
+                </div>
+            `).join('')
+            : `<p class="muted">No invites yet. Share your link to start earning.</p>`;
+    }
+}
+
 function copyReferral() {
-    const link = document.getElementById('referral-link').value;
-    navigator.clipboard.writeText(link).then(() => {
+    navigator.clipboard.writeText(getReferralLink()).then(() => {
         showToast('Referral link copied');
     }).catch(() => {
         showToast('Copy failed');
     });
+}
+
+function copyReferralPage() {
+    copyReferral();
+}
+
+function shareReferral() {
+    const link = getReferralLink();
+    const text = encodeURIComponent('Join Trenches and earn points together! 💚');
+    const url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`;
+
+    if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(url);
+    } else {
+        window.open(url, '_blank');
+    }
+}
+
+function handleIncomingReferral() {
+    let ref = null;
+    if (tg?.initDataUnsafe?.start_param && tg.initDataUnsafe.start_param.startsWith('ref_')) {
+        ref = tg.initDataUnsafe.start_param.replace('ref_', '');
+    } else {
+        const params = new URLSearchParams(window.location.search);
+        const start = params.get('start');
+        if (start && start.startsWith('ref_')) {
+            ref = start.replace('ref_', '');
+        }
+    }
+
+    if (ref && ref !== getUserId()) {
+        const seenKey = 'trenches_ref_seen_' + ref;
+        try {
+            if (!localStorage.getItem(seenKey)) {
+                localStorage.setItem(seenKey, '1');
+                showToast('Welcome! You were invited by a friend.');
+            }
+        } catch (e) {
+            showToast('Welcome! You were invited by a friend.');
+        }
+    }
+}
+
+// Points
+function updatePoints() {
+    const dashboardPoints = document.getElementById('dashboard-points');
+    const earningsPoints = document.getElementById('earnings-points');
+    if (dashboardPoints) dashboardPoints.textContent = state.points;
+    if (earningsPoints) earningsPoints.textContent = state.points;
 }
 
 // Toast
@@ -307,10 +524,13 @@ function loadTelegramUser() {
 function init() {
     loadTelegramUser();
     updateProfile();
+    handleIncomingReferral();
     renderDashboard();
     renderMissions();
     renderSubmissions();
     renderEarnings();
+    renderReferral();
+    renderDaily();
 
     setTimeout(() => {
         showScreen('screen-dashboard');
