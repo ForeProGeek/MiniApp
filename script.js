@@ -1,6 +1,5 @@
 // Telegram WebApp init
 const tg = window.Telegram?.WebApp;
-// Trenches brand dark background
 if (tg) {
     tg.ready();
     tg.expand();
@@ -12,13 +11,16 @@ if (tg) {
 const state = {
     points: 0,
     xConnected: false,
-    onboardingStep: 0,
+    user: {
+        name: 'Peaky Josh',
+        initial: 'P'
+    },
     missions: {
         daily: [
             {
                 id: 'd1',
-                title: 'Comment on Trenches Post (3p)',
-                desc: 'Comment on Trenches Post (3p)',
+                title: 'Comment on Trenches Post',
+                desc: 'Leave a meaningful comment on the latest Trenches post.',
                 iconType: 'x',
                 points: 3,
                 status: 'open',
@@ -26,8 +28,8 @@ const state = {
             },
             {
                 id: 'd2',
-                title: 'Like on Trenches Post (3p)',
-                desc: 'Like on Trenches Post (3p). Points will credit shortly.',
+                title: 'Like on Trenches Post',
+                desc: 'Like the latest Trenches post to earn points.',
                 iconType: 'x',
                 points: 3,
                 status: 'open',
@@ -35,8 +37,8 @@ const state = {
             },
             {
                 id: 'd3',
-                title: 'Retweet on Trenches Post (3p)',
-                desc: 'Retweet on Trenches Post (3p)',
+                title: 'Retweet on Trenches Post',
+                desc: 'Retweet the latest Trenches post to spread the word.',
                 iconType: 'x',
                 points: 3,
                 status: 'open',
@@ -46,8 +48,8 @@ const state = {
         general: [
             {
                 id: 'g3',
-                title: 'Follow Trenches X Account (5p)',
-                desc: "Follow Trenches's Twitter and earn 5 Points.",
+                title: 'Follow Trenches X Account',
+                desc: "Follow Trenches on X and earn 5 points.",
                 iconType: 'x',
                 points: 5,
                 status: 'open',
@@ -56,7 +58,7 @@ const state = {
             {
                 id: 'g4',
                 title: 'Follow SprayTrenches Twitter',
-                desc: 'Follow SprayTrenches Twitter',
+                desc: 'Follow SprayTrenches on X for updates.',
                 iconType: 'x',
                 points: 5,
                 status: 'open',
@@ -64,8 +66,8 @@ const state = {
             },
             {
                 id: 'g6',
-                title: 'Join Trenches Discord (5p)',
-                desc: "Join Trenches's Discord and earn 5 Points!",
+                title: 'Join Trenches Discord',
+                desc: "Join Trenches's Discord community and earn points!",
                 iconType: 'discord',
                 points: 5,
                 status: 'open',
@@ -73,8 +75,8 @@ const state = {
             },
             {
                 id: 'g7',
-                title: 'Join Trenches TG Channel (5p)',
-                desc: 'Join Trenches TG channel and earn 5 Points!',
+                title: 'Join Trenches TG Channel',
+                desc: 'Join Trenches Telegram channel and earn points!',
                 iconType: 'telegram',
                 points: 5,
                 status: 'open',
@@ -92,56 +94,49 @@ const icons = {
 };
 
 // Navigation
-let historyStack = ['screen-splash'];
-
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (historyStack[historyStack.length - 1] !== id) {
-        historyStack.push(id);
-    }
     window.scrollTo(0, 0);
-}
 
-function goBack() {
-    if (historyStack.length > 1) {
-        historyStack.pop();
-        const prev = historyStack[historyStack.length - 1];
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(prev).classList.add('active');
-    }
+    document.querySelectorAll('.bottom-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.screen === id);
+    });
+
+    if (id === 'screen-missions') renderMissions();
+    if (id === 'screen-dashboard') renderDashboard();
+    if (id === 'screen-submissions') renderSubmissions();
+    if (id === 'screen-earnings') renderEarnings();
 }
 
 function closeApp() {
     if (tg) tg.close();
 }
 
-// Onboarding flow
+// X connection
 function connectX() {
     state.xConnected = true;
-    showScreen('screen-connected-x');
+    state.user.name = '@Peaky Josh';
+    state.user.initial = 'P';
+    updateProfile();
+    showToast('X account connected');
 }
 
-function disconnectX() {
-    state.xConnected = false;
-    showScreen('screen-connect-x');
-}
+function updateProfile() {
+    const nameEl = document.getElementById('user-name');
+    const statusEl = document.getElementById('x-status');
+    const initialEl = document.getElementById('user-initial');
+    const btn = document.getElementById('connect-x-btn');
 
-function completeOnboarding(next) {
-    if (next === 'telegram') showScreen('screen-join-telegram');
-    if (next === 'discord') showScreen('screen-join-discord');
-}
+    if (nameEl) nameEl.textContent = state.user.name;
+    if (initialEl) initialEl.textContent = state.user.initial;
 
-function finishOnboarding() {
-    state.onboardingStep = 4;
-    showScreen('screen-missions');
-}
-
-function openExternal(url) {
-    if (tg) {
-        tg.openLink(url);
-    } else {
-        window.open(url, '_blank');
+    if (state.xConnected) {
+        if (statusEl) statusEl.textContent = 'Verified · X connected';
+        if (btn) {
+            btn.textContent = 'X Connected';
+            btn.disabled = true;
+        }
     }
 }
 
@@ -153,6 +148,32 @@ function switchTab(tab, btn) {
     document.getElementById(tab + '-panel').classList.add('active');
 }
 
+// Render dashboard
+function renderDashboard() {
+    const all = [...state.missions.daily, ...state.missions.general];
+    const available = all.filter(m => m.status === 'open').length;
+    const verifying = all.filter(m => m.status === 'verifying').length;
+    const approved = all.filter(m => m.status === 'done').length;
+
+    const availableEl = document.getElementById('stat-available');
+    const verifyingEl = document.getElementById('stat-verifying');
+    const approvedEl = document.getElementById('stat-approved');
+    const pointsEl = document.getElementById('dashboard-points');
+
+    if (availableEl) availableEl.textContent = available;
+    if (verifyingEl) verifyingEl.textContent = verifying;
+    if (approvedEl) approvedEl.textContent = approved;
+    if (pointsEl) pointsEl.textContent = state.points;
+
+    const dashboardMissions = document.getElementById('dashboard-missions');
+    if (dashboardMissions) {
+        const recommended = all.filter(m => m.status === 'open').slice(0, 3);
+        dashboardMissions.innerHTML = recommended.length
+            ? recommended.map(m => missionHTML(m)).join('')
+            : `<p class="muted">No missions or tasks available right now.</p>`;
+    }
+}
+
 // Render missions
 function renderMissions() {
     const dailyList = document.getElementById('daily-list');
@@ -161,9 +182,6 @@ function renderMissions() {
 
     const dailyAvailable = state.missions.daily.filter(m => m.status === 'open').length;
     const generalAvailable = state.missions.general.filter(m => m.status === 'open').length;
-
-    document.getElementById('daily-count').textContent = dailyAvailable;
-    document.getElementById('general-count').textContent = generalAvailable;
 
     const dailyBadge = document.getElementById('daily-badge');
     const generalBadge = document.getElementById('general-badge');
@@ -175,12 +193,9 @@ function renderMissions() {
 }
 
 function missionHTML(m) {
-    let icon = '';
-    if (m.iconType === 'image') {
-        icon = `<img src="${m.image}" alt="">`;
-    } else {
-        icon = icons[m.iconType] || icons.x;
-    }
+    const icon = m.iconType === 'image'
+        ? `<img src="${m.image}" alt="">`
+        : icons[m.iconType] || icons.x;
 
     let action = '';
     if (m.status === 'verifying') {
@@ -208,11 +223,10 @@ function doMission(id) {
     const mission = all.find(m => m.id === id);
     if (!mission || mission.status === 'verifying' || mission.status === 'done') return;
 
-    // Mark as verifying immediately
     mission.status = 'verifying';
     renderMissions();
+    renderDashboard();
 
-    // Add a pending submission
     state.submissions.unshift({
         title: mission.title,
         meta: `Started · ${new Date().toLocaleString()}`,
@@ -222,7 +236,6 @@ function doMission(id) {
 
     showToast('Verification started');
 
-    // Open the external action
     if (tg) {
         tg.openLink(mission.url);
     } else {
@@ -235,24 +248,26 @@ function renderSubmissions() {
     const list = document.getElementById('submissions-list');
     if (!list) return;
 
-    list.innerHTML = state.submissions.map(s => `
-        <div class="submission-item">
-            <div>
-                <div class="submission-title">${s.title}</div>
-                <div class="submission-meta">${s.meta}</div>
+    list.innerHTML = state.submissions.length
+        ? state.submissions.map(s => `
+            <div class="submission-item">
+                <div>
+                    <div class="submission-title">${s.title}</div>
+                    <div class="submission-meta">${s.meta}</div>
+                </div>
+                <div class="status-badge ${s.status}">
+                    <span class="status-dot"></span>
+                    ${s.status === 'approved' ? 'Approved' : 'Verifying...'}
+                </div>
             </div>
-            <div class="status-badge ${s.status}">
-                <span class="status-dot"></span>
-                ${s.status === 'approved' ? 'Approved' : 'Verifying...'}
-            </div>
-        </div>
-    `).join('');
+        `).join('')
+        : `<p class="muted">No submissions yet. Complete a mission to get started.</p>`;
 }
 
-// Points
-function updatePoints() {
-    document.getElementById('points').textContent = state.points;
-    document.getElementById('earnings-points').textContent = state.points;
+// Render earnings
+function renderEarnings() {
+    const pointsEl = document.getElementById('earnings-points');
+    if (pointsEl) pointsEl.textContent = state.points;
 }
 
 // Referral
@@ -278,27 +293,27 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// Progress dots
-function renderDots(containerId, activeIndex, total) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = Array.from({ length: total }, (_, i) =>
-        `<div class="dot ${i === activeIndex ? 'active' : ''}"></div>`
-    ).join('');
+// Telegram user data
+function loadTelegramUser() {
+    const user = tg?.initDataUnsafe?.user;
+    if (user) {
+        state.user.name = user.username || user.first_name || state.user.name;
+        state.user.initial = (user.first_name?.[0] || user.username?.[0] || 'T').toUpperCase();
+        updateProfile();
+    }
 }
 
 // Init
 function init() {
+    loadTelegramUser();
+    updateProfile();
+    renderDashboard();
     renderMissions();
     renderSubmissions();
-    updatePoints();
-    renderDots('dots-follow', 0, 4);
-    renderDots('dots-telegram', 1, 4);
-    renderDots('dots-discord', 2, 4);
+    renderEarnings();
 
-    // Auto-advance splash after 2.5 seconds
     setTimeout(() => {
-        showScreen('screen-connect-x');
+        showScreen('screen-dashboard');
     }, 2500);
 }
 

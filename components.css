@@ -1,74 +1,3 @@
-/* Profile header */
-.profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.user-name {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.points {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 8px;
-}
-
-.points-label {
-    font-size: 16px;
-    color: var(--text-secondary);
-    font-weight: 600;
-}
-
-.top-tabs {
-    display: flex;
-    gap: 12px;
-    font-size: 13px;
-}
-
-.top-tab {
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.top-tab.active {
-    color: var(--accent);
-}
-
-.top-tab {
-    color: var(--text-secondary);
-}
-
-/* Referral card */
-.referral-card {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    margin-bottom: 20px;
-}
-
-.referral-card input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 13px;
-    outline: none;
-}
-
-.copy-btn {
-    color: var(--text-secondary);
-    background: transparent;
-    width: 32px;
-    height: 32px;
-}
-
 /* Tab bar */
 .tab-bar {
     display: flex;
@@ -111,7 +40,7 @@
     color: var(--accent);
     font-size: 11px;
     font-weight: 700;
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: 999px;
 }
 
@@ -121,16 +50,6 @@
 
 .tab-panel.active {
     display: block;
-}
-
-.section-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.section-title span {
-    color: var(--accent);
 }
 
 /* Mission list */
@@ -144,7 +63,7 @@
 .mission-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -152,8 +71,8 @@
 }
 
 .mission-icon {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.05);
     display: flex;
@@ -204,16 +123,19 @@
 }
 
 .pill {
-    min-width: 64px;
-    height: 34px;
+    min-width: 68px;
+    height: 36px;
     border-radius: 999px;
     border: none;
     background: var(--accent);
     color: var(--bg-primary);
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
-    padding: 0 16px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pill:hover:not(:disabled) {
@@ -269,8 +191,8 @@
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    font-weight: 600;
-    padding: 6px 10px;
+    font-weight: 700;
+    padding: 6px 12px;
     border-radius: 999px;
 }
 
@@ -298,42 +220,20 @@
     background: var(--warning);
 }
 
-/* Stat card */
-.stat-card {
-    padding: 20px;
-}
-
-.stat-label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-}
-
-.stat-value {
-    font-size: 36px;
-    font-weight: 800;
-    color: var(--accent);
-}
-
-.stat-unit {
-    font-size: 18px;
-    color: var(--text-secondary);
-    font-weight: 600;
-}
-
 /* Bottom nav */
 .bottom-nav {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
     display: flex;
     justify-content: space-around;
     padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-    background: rgba(10, 10, 11, 0.95);
+    background: rgba(10, 10, 11, 0.92);
     border-top: 1px solid var(--border);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     z-index: 100;
 }
 
@@ -345,9 +245,11 @@
     background: none;
     border: none;
     color: var(--text-secondary);
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 600;
     cursor: pointer;
-    padding: 4px 12px;
+    padding: 6px 10px;
+    flex: 1;
 }
 
 .bottom-tab.active {
@@ -355,28 +257,6 @@
 }
 
 .bottom-tab-icon {
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1;
-}
-
-/* Toast */
-.toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    z-index: 200;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-}
-
-.toast.show {
-    opacity: 1;
 }

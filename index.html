@@ -10,190 +10,224 @@
 </head>
 <body>
     <div id="app">
-        <!-- Screen: Splash -->
-        <section id="screen-splash" class="screen active" onclick="showScreen('screen-connect-x')">
+        <!-- Splash -->
+        <section id="screen-splash" class="screen active" onclick="showScreen('screen-dashboard')">
             <main class="centered splash">
-                <div class="splash-logo">
-                    <img src="images/logo.png" alt="Trenches logo">
+                <div class="splash-logo-glow">
+                    <div class="splash-logo">
+                        <img src="images/logo.png" alt="Trenches logo">
+                    </div>
                 </div>
                 <h1 class="splash-name">TRENCHES</h1>
             </main>
         </section>
 
-        <!-- Screen: Connect X -->
-        <section id="screen-connect-x" class="screen">
-            <main class="centered">
-                <div class="logo-card">
-                    <svg class="big-logo" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
+        <!-- Dashboard -->
+        <section id="screen-dashboard" class="screen">
+            <main class="page-main dashboard">
+                <header class="dashboard-header">
+                    <div class="brand-pill">
+                        <img src="images/logo.png" alt="">
+                        <span>TRENCHES</span>
+                    </div>
+                    <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
+                </header>
+
+                <div class="profile-card">
+                    <div class="profile-row">
+                        <div class="avatar avatar-lg" id="user-initial">T</div>
+                        <div class="profile-meta">
+                            <div class="user-name" id="user-name">Peaky Josh</div>
+                            <div class="handle" id="x-status">Connect X to verify tasks</div>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <div class="points-label">Total Points</div>
+                        <div class="points" id="dashboard-points">0</div>
+                    </div>
+                    <button class="btn btn-primary" id="connect-x-btn" onclick="connectX()">Connect X Account</button>
                 </div>
-                <h1 class="title">Connect your X account</h1>
-                <p class="subtitle">Link your X account to continue.</p>
-                <button class="btn btn-primary" onclick="connectX()">Connect X</button>
+
+                <div class="stats-grid">
+                    <div class="stat-tile">
+                        <div class="stat-tile-value" id="stat-available">0</div>
+                        <div class="stat-tile-label">Available</div>
+                    </div>
+                    <div class="stat-tile">
+                        <div class="stat-tile-value" id="stat-verifying">0</div>
+                        <div class="stat-tile-label">Verifying</div>
+                    </div>
+                    <div class="stat-tile">
+                        <div class="stat-tile-value" id="stat-approved">0</div>
+                        <div class="stat-tile-label">Approved</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-tile" onclick="showScreen('screen-missions')">
+                        <span class="action-icon">&#9733;</span>
+                        <span class="action-title">Missions</span>
+                        <span class="action-desc">Earn points</span>
+                    </button>
+                    <button class="action-tile" onclick="showScreen('screen-submissions')">
+                        <span class="action-icon">&#9776;</span>
+                        <span class="action-title">Submissions</span>
+                        <span class="action-desc">Track status</span>
+                    </button>
+                    <button class="action-tile" onclick="showScreen('screen-earnings')">
+                        <span class="action-icon">&#36;</span>
+                        <span class="action-title">Earnings</span>
+                        <span class="action-desc">Your rewards</span>
+                    </button>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Recommended Missions</h2>
+                    <button class="text-btn" onclick="showScreen('screen-missions')">View all</button>
+                </div>
+                <div class="mission-list" id="dashboard-missions"></div>
             </main>
-            <footer class="sticky-footer">
-                <button class="btn btn-primary" disabled>Next</button>
-            </footer>
+
+            <nav class="bottom-nav">
+                <button class="bottom-tab active" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                    <span class="bottom-tab-icon">&#9733;</span>
+                    <span>Missions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
+                    <span class="bottom-tab-icon">&#9776;</span>
+                    <span>Submissions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
+                </button>
+            </nav>
         </section>
 
-        <!-- Screen: X Connected -->
-        <section id="screen-connected-x" class="screen">
-            <header class="top-bar">
-                <button class="icon-btn" onclick="goBack()" aria-label="Back">&#8592;</button>
-                <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
-            </header>
-            <main class="centered">
-                <h1 class="title">Connect X</h1>
-                <p class="subtitle">Connect your X account to verify your tweet submissions.</p>
-                <div class="card connected-card">
-                    <p class="muted">Your X account is connected.</p>
-                    <button class="text-btn danger" onclick="disconnectX()">Disconnect X</button>
-                </div>
-            </main>
-            <footer class="sticky-footer">
-                <button class="btn btn-primary" onclick="showScreen('screen-missions')">Done</button>
-            </footer>
-        </section>
-
-        <!-- Screen: Follow XEFY -->
-        <section id="screen-follow-x" class="screen">
-            <header class="top-bar">
-                <button class="icon-btn" onclick="goBack()" aria-label="Back">&#8592;</button>
-                <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
-            </header>
-            <main class="centered">
-                <div class="logo-card">
-                    <svg class="big-logo" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                </div>
-                <h1 class="title">Follow Trenches</h1>
-                <p class="subtitle">Open the mission using the button below. When you are ready, tap Next.</p>
-                <div class="card action-card">
-                    <p class="muted">Open X and complete the action.</p>
-                    <button class="btn btn-outline" onclick="openExternal('https://x.com/Trenches')">Open on X</button>
-                </div>
-            </main>
-            <footer class="sticky-footer">
-                <div class="dots" id="dots-follow"></div>
-                <button class="btn btn-primary" onclick="completeOnboarding('telegram')">Next</button>
-            </footer>
-        </section>
-
-        <!-- Screen: Join Telegram -->
-        <section id="screen-join-telegram" class="screen">
-            <header class="top-bar">
-                <button class="icon-btn" onclick="goBack()" aria-label="Back">&#8592;</button>
-                <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
-            </header>
-            <main class="centered">
-                <div class="logo-card telegram">
-                    <svg class="big-logo" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-                    </svg>
-                </div>
-                <h1 class="title">Join Telegram</h1>
-                <p class="subtitle">Open the mission using the button below. When you are ready, tap Next.</p>
-                <div class="card action-card">
-                    <p class="muted">Join the channel from here, then return to continue.</p>
-                    <button class="btn btn-link" onclick="openExternal('https://t.me/Trenches')">Join channel</button>
-                </div>
-            </main>
-            <footer class="sticky-footer">
-                <div class="dots" id="dots-telegram"></div>
-                <button class="btn btn-primary" onclick="completeOnboarding('discord')">Next</button>
-            </footer>
-        </section>
-
-        <!-- Screen: Join Discord -->
-        <section id="screen-join-discord" class="screen">
-            <header class="top-bar">
-                <button class="icon-btn" onclick="goBack()" aria-label="Back">&#8592;</button>
-                <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
-            </header>
-            <main class="centered">
-                <div class="logo-card discord">
-                    <svg class="big-logo" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.0991.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.6989.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6574a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/>
-                    </svg>
-                </div>
-                <h1 class="title">Join Discord</h1>
-                <p class="subtitle">Open the mission using the button below. When you are ready, tap Next.</p>
-                <div class="card action-card">
-                    <p class="muted">Join the server from here, then return to continue.</p>
-                    <button class="btn btn-link" onclick="openExternal('https://discord.gg/Trenches')">Join server</button>
-                </div>
-            </main>
-            <footer class="sticky-footer">
-                <div class="dots" id="dots-discord"></div>
-                <button class="btn btn-primary" onclick="finishOnboarding()">Done</button>
-            </footer>
-        </section>
-
-        <!-- Screen: Missions -->
+        <!-- Missions -->
         <section id="screen-missions" class="screen">
             <main class="page-main">
+                <header class="page-header">
+                    <h1 class="page-title">Missions</h1>
+                    <p class="page-subtitle">Complete tasks to earn points.</p>
+                </header>
+
                 <div class="tab-bar">
                     <button class="tab active" onclick="switchTab('daily', this)">Daily <span class="badge" id="daily-badge">0</span></button>
                     <button class="tab" onclick="switchTab('general', this)">General <span class="badge" id="general-badge">0</span></button>
                 </div>
 
                 <div id="daily-panel" class="tab-panel active">
-                    <div class="section-title">Daily Mission <span id="daily-count">3</span></div>
                     <div class="mission-list" id="daily-list"></div>
                 </div>
-
                 <div id="general-panel" class="tab-panel">
-                    <div class="section-title">General Mission <span id="general-count">7</span></div>
                     <div class="mission-list" id="general-list"></div>
                 </div>
             </main>
 
             <nav class="bottom-nav">
-                <button class="bottom-tab active" onclick="showScreen('screen-missions')">
+                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab active" data-screen="screen-missions" onclick="showScreen('screen-missions')">
                     <span class="bottom-tab-icon">&#9733;</span>
                     <span>Missions</span>
                 </button>
-                <button class="bottom-tab" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-                <button class="bottom-tab" onclick="showScreen('screen-submissions')">
+                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
                     <span class="bottom-tab-icon">&#9776;</span>
                     <span>Submissions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
                 </button>
             </nav>
         </section>
 
-        <!-- Screen: Earnings -->
+        <!-- Submissions -->
+        <section id="screen-submissions" class="screen">
+            <main class="page-main">
+                <header class="page-header">
+                    <h1 class="page-title">My Submissions</h1>
+                    <p class="page-subtitle">Latest activity from your tasks.</p>
+                </header>
+                <div class="submissions-list" id="submissions-list"></div>
+            </main>
+
+            <nav class="bottom-nav">
+                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                    <span class="bottom-tab-icon">&#9733;</span>
+                    <span>Missions</span>
+                </button>
+                <button class="bottom-tab active" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
+                    <span class="bottom-tab-icon">&#9776;</span>
+                    <span>Submissions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- Earnings -->
         <section id="screen-earnings" class="screen">
             <main class="page-main">
-                <h1 class="page-title">Earnings</h1>
-                <p class="page-subtitle">Your total points from approved submissions.</p>
+                <header class="page-header">
+                    <h1 class="page-title">Earnings</h1>
+                    <p class="page-subtitle">Your total points and referral rewards.</p>
+                </header>
+
                 <div class="card stat-card">
                     <div class="stat-label">TOTAL POINTS</div>
                     <div class="stat-value"><span id="earnings-points">0</span> <span class="stat-unit">P</span></div>
                 </div>
-            </main>
-            <nav class="bottom-nav">
-                <button class="bottom-tab" onclick="showScreen('screen-missions')">Missions</button>
-                <button class="bottom-tab active" onclick="showScreen('screen-earnings')">Earnings</button>
-                <button class="bottom-tab" onclick="showScreen('screen-submissions')">Submissions</button>
-            </nav>
-        </section>
 
-        <!-- Screen: Submissions -->
-        <section id="screen-submissions" class="screen">
-            <main class="page-main">
-                <h1 class="page-title">My submissions</h1>
-                <p class="page-subtitle">Latest 100 from your project.</p>
-                <div class="submissions-list" id="submissions-list"></div>
+                <div class="section-header">
+                    <h2 class="section-title">Referral Link</h2>
+                </div>
+                <div class="card referral-card">
+                    <input type="text" id="referral-link" value="https://t.me/spraytrenches_bot?start=ref_123" readonly>
+                    <button class="copy-btn" onclick="copyReferral()" aria-label="Copy">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
+                </div>
+
+                <div class="card info-card">
+                    <div class="info-title">How it works</div>
+                    <p class="muted">Complete missions, invite friends, and earn points. Points may be converted to rewards once the campaign goes live.</p>
+                </div>
             </main>
+
             <nav class="bottom-nav">
-                <button class="bottom-tab" onclick="showScreen('screen-missions')">Missions</button>
-                <button class="bottom-tab" onclick="showScreen('screen-earnings')">Earnings</button>
-                <button class="bottom-tab active" onclick="showScreen('screen-submissions')">Submissions</button>
+                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
+                    <span class="bottom-tab-icon">&#8962;</span>
+                    <span>Home</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                    <span class="bottom-tab-icon">&#9733;</span>
+                    <span>Missions</span>
+                </button>
+                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
+                    <span class="bottom-tab-icon">&#9776;</span>
+                    <span>Submissions</span>
+                </button>
+                <button class="bottom-tab active" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
+                    <span class="bottom-tab-icon">&#36;</span>
+                    <span>Earnings</span>
+                </button>
             </nav>
         </section>
     </div>
