@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,10 +9,11 @@
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./components.css">
 </head>
+
 <body>
     <div id="app">
         <!-- Splash -->
-        <section id="screen-splash" class="screen active" onclick="showScreen('screen-dashboard')">
+        <section id="screen-splash" class="screen active" onclick="showScreen('screen-main')">
             <main class="centered splash">
                 <div class="splash-logo-glow">
                     <div class="splash-logo">
@@ -22,86 +24,89 @@
             </main>
         </section>
 
-        <!-- Dashboard -->
-        <section id="screen-dashboard" class="screen">
-            <main class="page-main dashboard">
-                <header class="dashboard-header">
-                    <div class="brand-pill">
-                        <img src="images/logo.png" alt="">
-                        <span>TRENCHES</span>
+        <!-- Main -->
+        <section id="screen-main" class="screen">
+            <main class="page-main main-screen">
+                <header class="main-header">
+                    <button class="header-pill" onclick="closeApp()">
+                        <span class="close-x">&times;</span>
+                        <span>Close</span>
+                    </button>
+                    <div class="header-actions">
+                        <button class="icon-btn theme-toggle" onclick="toggleTheme()"
+                            aria-label="Toggle theme">&#9788;</button>
+                        <button class="icon-btn" onclick="showOptions()" aria-label="Options">&#8230;</button>
                     </div>
-                    <button class="icon-btn" onclick="closeApp()" aria-label="Close">&#10005;</button>
                 </header>
 
-                <div class="profile-card">
-                    <div class="profile-row">
-                        <div class="avatar avatar-lg" id="user-initial">T</div>
-                        <div class="profile-meta">
-                            <div class="user-name" id="user-name">Peaky Josh</div>
-                            <div class="handle" id="x-status">Connect X to verify tasks</div>
-                        </div>
+                <div class="user-block">
+                    <div class="user-row">
+                        <div class="avatar" id="user-initial">I</div>
+                        <span class="user-name" id="user-name">IzeCube</span>
+                        <span class="verified-badge" aria-label="Verified">&#10003;</span>
                     </div>
-                    <div class="points-display">
-                        <div class="points-label">Total Points</div>
-                        <div class="points" id="dashboard-points">0</div>
-                    </div>
-                    <button class="btn btn-primary" id="connect-x-btn" onclick="connectX()">Connect X Account</button>
+                    <button class="bp-display" onclick="showScreen('screen-wallet')" aria-label="Open BP Wallet">
+                        <span class="bp-amount" id="bp-balance">14</span>
+                        <span class="bp-unit">P</span>
+                    </button>
+                    <nav class="top-links">
+                        <button onclick="showScreen('screen-wallet')">Earnings</button>
+                        <button onclick="showScreen('screen-submissions')">Submissions</button>
+                        <button onclick="showScreen('screen-referrals')">Referrals</button>
+                    </nav>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-tile">
-                        <div class="stat-tile-value" id="stat-available">0</div>
-                        <div class="stat-tile-label">Available</div>
-                    </div>
-                    <div class="stat-tile">
-                        <div class="stat-tile-value" id="stat-verifying">0</div>
-                        <div class="stat-tile-label">Verifying</div>
-                    </div>
-                    <div class="stat-tile">
-                        <div class="stat-tile-value" id="stat-approved">0</div>
-                        <div class="stat-tile-label">Approved</div>
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <h2 class="section-title">Quick Actions</h2>
-                </div>
-                <div class="quick-actions">
-                    <button class="action-tile" onclick="showScreen('screen-missions')">
-                        <span class="action-icon">&#9733;</span>
-                        <span class="action-title">Missions</span>
-                        <span class="action-desc">Earn points</span>
-                    </button>
-                    <button class="action-tile" onclick="showScreen('screen-daily')">
-                        <span class="action-icon">&#128197;</span>
-                        <span class="action-title">Daily</span>
-                        <span class="action-desc">Check in</span>
-                    </button>
-                    <button class="action-tile" onclick="showScreen('screen-referral')">
-                        <span class="action-icon">&#128101;</span>
-                        <span class="action-title">Friends</span>
-                        <span class="action-desc">Invite & earn</span>
-                    </button>
-                    <button class="action-tile" onclick="showScreen('screen-submissions')">
-                        <span class="action-icon">&#9776;</span>
-                        <span class="action-title">Submissions</span>
-                        <span class="action-desc">Track status</span>
+                <div class="referral-copy-card">
+                    <input type="text" id="main-referral-link" readonly>
+                    <button class="copy-btn" onclick="copyMainReferral()" aria-label="Copy referral link">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                            <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                        </svg>
                     </button>
                 </div>
 
-                <div class="section-header">
-                    <h2 class="section-title">Recommended Missions</h2>
-                    <button class="text-btn" onclick="showScreen('screen-missions')">View all</button>
+                <div class="alert-card" id="alert-card" onclick="cycleAlert()">
+                    <div class="alert-type" id="alert-type">AIRDROP ACCOUNT REGISTRATION</div>
+                    <div class="alert-title" id="alert-title">Register for airdrop</div>
+                    <div class="alert-meta" id="alert-meta">Deadline Jun 29, 2026, 2:00 PM</div>
+                    <div class="alert-icon" id="alert-icon">$</div>
                 </div>
-                <div class="mission-list" id="dashboard-missions"></div>
+
+                <div class="tab-bar main-tabs">
+                    <button class="tab active" onclick="switchMainTab('daily', this)">
+                        Daily <span class="badge" id="daily-badge">5</span>
+                    </button>
+                    <button class="tab" onclick="switchMainTab('general', this)">
+                        General <span class="badge" id="general-badge">9</span>
+                    </button>
+                </div>
+
+                <div id="main-daily-panel" class="tab-panel active">
+                    <div class="timezone-note">Daily missions reset by timezone: Nigeria</div>
+
+                    <div class="checkin-card">
+                        <h3 class="checkin-title">Daily Check-in</h3>
+                        <div class="streak-circles" id="streak-circles"></div>
+                        <button class="btn btn-primary checkin-btn" id="main-checkin-btn" onclick="claimCheckIn()">Check
+                            In</button>
+                    </div>
+
+                    <h3 class="section-heading">Daily Mission <span class="accent-count" id="daily-count">4</span></h3>
+                    <div class="mission-list" id="main-daily-list"></div>
+
+                    <h3 class="section-heading">Completed today <span class="accent-count" id="completed-count">0</span>
+                    </h3>
+                    <p class="muted" id="completed-empty">No completed missions yet today.</p>
+                </div>
+
+                <div id="main-general-panel" class="tab-panel">
+                    <div class="mission-list" id="main-general-list"></div>
+                </div>
             </main>
 
             <nav class="bottom-nav">
-                <button class="bottom-tab active" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
+                <button class="bottom-tab active" data-screen="screen-main" onclick="showScreen('screen-main')">
                     <span class="bottom-tab-icon">&#9733;</span>
                     <span>Missions</span>
                 </button>
@@ -109,140 +114,108 @@
                     <span class="bottom-tab-icon">&#9776;</span>
                     <span>Submissions</span>
                 </button>
-                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
+                <button class="bottom-tab" data-screen="screen-referrals" onclick="showScreen('screen-referrals')">
+                    <span class="bottom-tab-icon">&#128101;</span>
+                    <span>Referrals</span>
                 </button>
             </nav>
         </section>
 
-        <!-- Missions -->
-        <section id="screen-missions" class="screen">
+        <!-- BP Wallet -->
+        <section id="screen-wallet" class="screen">
             <main class="page-main">
-                <header class="page-header">
-                    <h1 class="page-title">Missions</h1>
-                    <p class="page-subtitle">Complete tasks to earn points.</p>
+                <header class="page-header with-back">
+                    <button class="back-btn" onclick="showScreen('screen-main')" aria-label="Back">&#8592;</button>
+                    <h1 class="page-title">BP Wallet</h1>
                 </header>
 
-                <div class="tab-bar">
-                    <button class="tab active" onclick="switchTab('daily', this)">Daily <span class="badge" id="daily-badge">0</span></button>
-                    <button class="tab" onclick="switchTab('general', this)">General <span class="badge" id="general-badge">0</span></button>
+                <div class="wallet-balance-card">
+                    <div class="bp-display lg">
+                        <span class="bp-amount" id="wallet-balance">14</span>
+                        <span class="bp-unit">P</span>
+                    </div>
+                    <div class="wallet-label">available</div>
                 </div>
 
-                <div id="daily-panel" class="tab-panel active">
-                    <div class="mission-list" id="daily-list"></div>
+                <div class="wallet-actions">
+                    <button class="wallet-action" onclick="showScreen('screen-send')">
+                        <span class="wallet-action-icon">&#8593;</span>
+                        <span>Send BP</span>
+                    </button>
+                    <button class="wallet-action" onclick="showScreen('screen-receive')">
+                        <span class="wallet-action-icon">&#8595;</span>
+                        <span>Receive BP</span>
+                    </button>
                 </div>
-                <div id="general-panel" class="tab-panel">
-                    <div class="mission-list" id="general-list"></div>
+
+                <h3 class="section-heading">Recent activity</h3>
+                <div class="activity-list" id="wallet-activity"></div>
+            </main>
+        </section>
+
+        <!-- Send BP -->
+        <section id="screen-send" class="screen">
+            <main class="page-main">
+                <header class="page-header with-back">
+                    <button class="back-btn" onclick="showScreen('screen-wallet')" aria-label="Back">&#8592;</button>
+                    <h1 class="page-title">Send BP</h1>
+                </header>
+
+                <div class="form-card">
+                    <label class="form-label" for="send-recipient">Recipient</label>
+                    <input type="text" id="send-recipient" class="form-input" placeholder="@username or user ID">
+
+                    <label class="form-label" for="send-amount">Amount</label>
+                    <input type="number" id="send-amount" class="form-input" placeholder="0" min="1">
+
+                    <button class="btn btn-primary" onclick="confirmSend()">Continue</button>
                 </div>
             </main>
+        </section>
 
-            <nav class="bottom-nav">
-                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab active" data-screen="screen-missions" onclick="showScreen('screen-missions')">
-                    <span class="bottom-tab-icon">&#9733;</span>
-                    <span>Missions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
-                    <span class="bottom-tab-icon">&#9776;</span>
-                    <span>Submissions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-            </nav>
+        <!-- Receive BP -->
+        <section id="screen-receive" class="screen">
+            <main class="page-main">
+                <header class="page-header with-back">
+                    <button class="back-btn" onclick="showScreen('screen-wallet')" aria-label="Back">&#8592;</button>
+                    <h1 class="page-title">Receive BP</h1>
+                </header>
+
+                <div class="receive-card">
+                    <div class="receive-code" id="receive-code">ref_679483716</div>
+                    <p class="muted">Share this code or your referral link to receive BP.</p>
+                    <button class="btn btn-primary" onclick="copyReceiveCode()">Copy code</button>
+                </div>
+            </main>
         </section>
 
         <!-- Submissions -->
         <section id="screen-submissions" class="screen">
             <main class="page-main">
-                <header class="page-header">
-                    <h1 class="page-title">My Submissions</h1>
-                    <p class="page-subtitle">Latest activity from your tasks.</p>
+                <header class="page-header with-back">
+                    <button class="back-btn" onclick="showScreen('screen-main')" aria-label="Back">&#8592;</button>
+                    <h1 class="page-title">Submissions</h1>
                 </header>
+                <p class="page-subtitle">Latest activity from your tasks.</p>
                 <div class="submissions-list" id="submissions-list"></div>
             </main>
-
-            <nav class="bottom-nav">
-                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
-                    <span class="bottom-tab-icon">&#9733;</span>
-                    <span>Missions</span>
-                </button>
-                <button class="bottom-tab active" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
-                    <span class="bottom-tab-icon">&#9776;</span>
-                    <span>Submissions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-            </nav>
         </section>
 
-        <!-- Daily Check-in -->
-        <section id="screen-daily" class="screen">
+        <!-- Referrals -->
+        <section id="screen-referrals" class="screen">
             <main class="page-main">
-                <header class="page-header">
-                    <h1 class="page-title">Daily Check-in</h1>
-                    <p class="page-subtitle">Come back every day to build your streak.</p>
+                <header class="page-header with-back">
+                    <button class="back-btn" onclick="showScreen('screen-main')" aria-label="Back">&#8592;</button>
+                    <h1 class="page-title">Referrals</h1>
                 </header>
+                <p class="page-subtitle">Direct referrals from your invite link.</p>
 
-                <div class="card daily-card">
-                    <div class="streak-row">
-                        <div>
-                            <div class="streak-count" id="streak-count">0</div>
-                            <div class="streak-label">Day streak</div>
-                        </div>
-                        <button class="pill checkin-btn" id="checkin-btn" onclick="claimCheckIn()">Check In</button>
+                <div class="referral-summary-card">
+                    <div class="referral-summary-label">TOTAL REFERRALS</div>
+                    <div class="referral-summary-row">
+                        <div class="referral-total" id="referral-total">3</div>
+                        <div class="referral-showing" id="referral-showing">Showing 3 of 3</div>
                     </div>
-                    <div class="calendar" id="calendar"></div>
-                </div>
-
-                <div class="card reward-card">
-                    <div class="reward-amount" id="reward-amount">+10 P</div>
-                    <div class="reward-desc">Check in today to claim your daily reward.</div>
-                </div>
-            </main>
-
-            <nav class="bottom-nav">
-                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
-                    <span class="bottom-tab-icon">&#9733;</span>
-                    <span>Missions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
-                    <span class="bottom-tab-icon">&#9776;</span>
-                    <span>Submissions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-            </nav>
-        </section>
-
-        <!-- Referral -->
-        <section id="screen-referral" class="screen">
-            <main class="page-main">
-                <header class="page-header">
-                    <h1 class="page-title">Invite Friends</h1>
-                    <p class="page-subtitle">Earn points for every friend who joins.</p>
-                </header>
-
-                <div class="card referral-hero">
-                    <div class="referral-points" id="referral-earned">0</div>
-                    <div class="referral-label">Points from referrals</div>
                 </div>
 
                 <div class="card referral-link-card">
@@ -252,84 +225,12 @@
 
                 <button class="btn btn-primary" onclick="shareReferral()">Share on Telegram</button>
 
-                <div class="section-header">
-                    <h2 class="section-title">Invited Friends</h2>
-                </div>
-                <div class="invited-list" id="invited-list">
-                    <p class="muted">No invites yet. Share your link to start earning.</p>
-                </div>
+                <div class="invited-list" id="invited-list"></div>
             </main>
-
-            <nav class="bottom-nav">
-                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
-                    <span class="bottom-tab-icon">&#9733;</span>
-                    <span>Missions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
-                    <span class="bottom-tab-icon">&#9776;</span>
-                    <span>Submissions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-            </nav>
-        </section>
-
-        <!-- Earnings -->
-        <section id="screen-earnings" class="screen">
-            <main class="page-main">
-                <header class="page-header">
-                    <h1 class="page-title">Earnings</h1>
-                    <p class="page-subtitle">Your total points and referral rewards.</p>
-                </header>
-
-                <div class="card stat-card">
-                    <div class="stat-label">TOTAL POINTS</div>
-                    <div class="stat-value"><span id="earnings-points">0</span> <span class="stat-unit">P</span></div>
-                </div>
-
-                <div class="section-header">
-                    <h2 class="section-title">Referral Link</h2>
-                </div>
-                <div class="card referral-card">
-                    <input type="text" id="referral-link" readonly>
-                    <button class="copy-btn" onclick="copyReferral()" aria-label="Copy">
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
-
-                <div class="card info-card">
-                    <div class="info-title">How it works</div>
-                    <p class="muted">Complete missions, invite friends, and earn points. Points may be converted to rewards once the campaign goes live.</p>
-                </div>
-            </main>
-
-            <nav class="bottom-nav">
-                <button class="bottom-tab" data-screen="screen-dashboard" onclick="showScreen('screen-dashboard')">
-                    <span class="bottom-tab-icon">&#8962;</span>
-                    <span>Home</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-missions" onclick="showScreen('screen-missions')">
-                    <span class="bottom-tab-icon">&#9733;</span>
-                    <span>Missions</span>
-                </button>
-                <button class="bottom-tab" data-screen="screen-submissions" onclick="showScreen('screen-submissions')">
-                    <span class="bottom-tab-icon">&#9776;</span>
-                    <span>Submissions</span>
-                </button>
-                <button class="bottom-tab active" data-screen="screen-earnings" onclick="showScreen('screen-earnings')">
-                    <span class="bottom-tab-icon">&#36;</span>
-                    <span>Earnings</span>
-                </button>
-            </nav>
         </section>
     </div>
 
     <script src="./script.js"></script>
 </body>
+
 </html>
